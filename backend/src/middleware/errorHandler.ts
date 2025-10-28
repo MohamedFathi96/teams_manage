@@ -1,7 +1,7 @@
 import type { NextFunction, Request, Response } from "express";
-import { logger } from "../lib/logger";
-import { AppError } from "../errors/AppError";
-import { ApiResponseHelper } from "../utils/responceHelper";
+import { logger } from "../lib/logger.js";
+import { AppError } from "../errors/AppError.js";
+import { ApiResponseHelper } from "../utils/responceHelper.js";
 
 export function notFoundHandler(_req: Request, _res: Response, next: NextFunction) {
   next(new AppError("Route not found", 404));

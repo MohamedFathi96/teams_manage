@@ -1,7 +1,7 @@
-import { createApp } from "./app";
-import { connectToDatabase } from "./db/mongoose";
-import { config } from "./config/index";
-import { logger } from "./lib/logger";
+import { createApp } from "./app.js";
+import { connectToDatabase } from "./db/mongoose.js";
+import { config } from "./config/index.js";
+import { logger } from "./lib/logger.js";
 import { createServer } from "http";
 
 async function start() {

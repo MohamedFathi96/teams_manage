@@ -1,7 +1,7 @@
 import { Router } from "express";
-import { getUsers, getUserProfile } from "../controllers/users.controller";
+import { getUsers, getUserProfile } from "../controllers/users.controller.js";
 import { z } from "zod";
-import { validate } from "../middleware/validate";
+import { validate } from "../middleware/validate.js";
 
 const router = Router();
 

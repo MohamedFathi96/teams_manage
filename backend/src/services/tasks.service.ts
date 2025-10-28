@@ -1,6 +1,6 @@
-import { Task, ITaskDocument } from "@/models/Task";
-import { User } from "@/models/User";
-import { NotFoundError, BadRequestError, ForbiddenError } from "@/errors/AppError";
+import { Task, ITaskDocument } from "@/models/Task.js";
+import { User } from "@/models/User.js";
+import { NotFoundError, BadRequestError, ForbiddenError } from "@/errors/AppError.js";
 import mongoose from "mongoose";
 import {
   CreateTaskDto,
@@ -9,7 +9,7 @@ import {
   TaskResponse,
   TasksListResponse,
   TaskFilters,
-} from "@/types/task.types";
+} from "@/types/task.types.js";
 
 export async function createTask(taskData: CreateTaskDto, createdById: string): Promise<TaskResponse> {
   // Validate that assignedTo user exists

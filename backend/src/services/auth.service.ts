@@ -1,7 +1,7 @@
-import { User } from "@/models/User";
-import { BadRequestError, UnauthorizedError } from "@/errors/AppError";
-import { signToken, generateRefreshToken, verifyRefreshToken } from "@/lib/jwt";
-import { config } from "@/config/index";
+import { User } from "@/models/User.js";
+import { BadRequestError, UnauthorizedError } from "@/errors/AppError.js";
+import { signToken, generateRefreshToken, verifyRefreshToken } from "@/lib/jwt.js";
+import { config } from "@/config/index.js";
 
 export async function registerUser(params: { email: string; password: string; name: string }) {
   const existing = await User.findOne({ email: params.email });

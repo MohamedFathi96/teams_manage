@@ -9,9 +9,9 @@ import {
   getMyTasksHandler,
   getTaskStatsHandler,
   getAllTaskStatsHandler,
-} from "../controllers/tasks.controller";
+} from "../controllers/tasks.controller.js";
 import { z } from "zod";
-import { validate } from "../middleware/validate";
+import { validate } from "../middleware/validate.js";
 
 const router = Router();
 

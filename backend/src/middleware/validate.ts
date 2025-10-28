@@ -1,7 +1,7 @@
 import type { NextFunction, Request, Response } from "express";
 import type { ZodSchema } from "zod";
 import { ZodError } from "zod";
-import { BadRequestError } from "../errors/AppError.ts";
+import { BadRequestError } from "../errors/AppError";
 
 export function validate<T>(schema: ZodSchema<T>, property: "body" | "params" | "query" = "body") {
   return (req: Request, _res: Response, next: NextFunction) => {

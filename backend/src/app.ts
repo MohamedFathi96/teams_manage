@@ -2,8 +2,8 @@ import express from "express";
 import cors from "cors";
 import helmet from "helmet";
 import morgan from "morgan";
-import routes from "./routes/index.ts";
-import { errorHandler, notFoundHandler } from "./middleware/errorHandler.ts";
+import routes from "./routes/index";
+import { errorHandler, notFoundHandler } from "./middleware/errorHandler";
 
 export function createApp() {
   const app = express();

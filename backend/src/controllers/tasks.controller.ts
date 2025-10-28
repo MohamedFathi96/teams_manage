@@ -7,10 +7,10 @@ import {
   deleteTask,
   getTasksByUser,
   getTaskStats,
-} from "../services/tasks.service.ts";
-import { catchAsync } from "../utils/catchAsync.ts";
-import { ApiResponseHelper } from "../utils/responceHelper.ts";
-import { CreateTaskDto, UpdateTaskDto, TaskQueryParams } from "@/types/task.types.ts";
+} from "../services/tasks.service";
+import { catchAsync } from "../utils/catchAsync";
+import { ApiResponseHelper } from "../utils/responceHelper";
+import { CreateTaskDto, UpdateTaskDto, TaskQueryParams } from "@/types/task.types";
 
 export const createTaskHandler = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
   const taskData: CreateTaskDto = req.body;

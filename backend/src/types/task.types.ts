@@ -1,4 +1,4 @@
-import { ITaskDocument } from "@/models/Task.ts";
+import { ITaskDocument } from "@/models/Task";
 
 export type TaskStatus = "pending" | "in_progress" | "completed" | "cancelled";
 

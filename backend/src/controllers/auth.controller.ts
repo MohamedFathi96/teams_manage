@@ -1,7 +1,7 @@
 import type { Request, Response, NextFunction } from "express";
-import { loginUser, registerUser, refreshTokens, logoutUser } from "../services/auth.service.ts";
-import { catchAsync } from "../utils/catchAsync.ts";
-import { ApiResponseHelper } from "../utils/responceHelper.ts";
+import { loginUser, registerUser, refreshTokens, logoutUser } from "../services/auth.service";
+import { catchAsync } from "../utils/catchAsync";
+import { ApiResponseHelper } from "../utils/responceHelper";
 
 export const register = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
   const result = await registerUser(req.body);

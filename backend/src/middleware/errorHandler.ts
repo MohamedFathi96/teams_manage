@@ -1,7 +1,7 @@
 import type { NextFunction, Request, Response } from "express";
-import { logger } from "../lib/logger.ts";
-import { AppError } from "../errors/AppError.ts";
-import { ApiResponseHelper } from "../utils/responceHelper.ts";
+import { logger } from "../lib/logger";
+import { AppError } from "../errors/AppError";
+import { ApiResponseHelper } from "../utils/responceHelper";
 
 export function notFoundHandler(_req: Request, _res: Response, next: NextFunction) {
   next(new AppError("Route not found", 404));

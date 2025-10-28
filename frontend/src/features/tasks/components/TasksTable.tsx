@@ -1,27 +1,40 @@
-import { Edit, Trash2, User, Calendar } from "lucide-react";
+import { useMemo } from "react";
+import { useSearch } from "@tanstack/react-router";
+import { Edit, Trash2, Calendar, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import type { ApiTask } from "@/types/app.type";
 import { EmptyState } from "./EmptyState";
+import { ErrorState } from "./ErrorState";
 import { TaskStatusBadge } from "./TaskStatusBadge";
+import { useTasks } from "../services";
 
 interface TasksTableProps {
-  tasks: ApiTask[];
-  searchTerm: string;
   onEditTask: (task: ApiTask) => void;
   onDeleteTask: (task: ApiTask) => void;
   isDeleting: boolean;
   currentUserId?: string;
 }
 
-export function TasksTable({
-  tasks,
-  searchTerm,
-  onEditTask,
-  onDeleteTask,
-  isDeleting,
-  currentUserId,
-}: TasksTableProps) {
+export function TasksTable({ onEditTask, onDeleteTask, isDeleting, currentUserId }: TasksTableProps) {
+  const searchParams = useSearch({ from: "/_autherized/tasks" });
+
+  const queryParams = useMemo(
+    () => ({
+      search: searchParams.search || undefined,
+      status: searchParams.status !== "all" ? searchParams.status : undefined,
+      sortBy: (searchParams.sortBy || "createdAt") as "createdAt" | "updatedAt" | "title" | "status",
+      sortOrder: (searchParams.sortOrder || "desc") as "asc" | "desc",
+      limit: 50, // Reasonable limit for now
+    }),
+    [searchParams.search, searchParams.status, searchParams.sortBy, searchParams.sortOrder]
+  );
+
+  const { data: tasksData, isLoading, error, refetch } = useTasks(queryParams);
+
+  const tasks = tasksData?.data?.tasks || [];
+  const searchTerm = searchParams.search || "";
+
   const formatDate = (dateString: string) => {
     return new Date(dateString).toLocaleDateString("en-US", {
       year: "numeric",
@@ -40,6 +53,28 @@ export function TasksTable({
     });
   };
 
+  // Loading state
+  if (isLoading) {
+    return (
+      <div className="bg-white rounded-lg border border-gray-200 overflow-hidden">
+        <div className="p-12 text-center">
+          <Loader2 className="w-8 h-8 text-indigo-600 animate-spin mx-auto mb-4" />
+          <p className="text-gray-500">Loading tasks...</p>
+        </div>
+      </div>
+    );
+  }
+
+  // Error state
+  if (error) {
+    return (
+      <div className="bg-white rounded-lg border border-gray-200 overflow-hidden">
+        <ErrorState onRetry={() => refetch()} />
+      </div>
+    );
+  }
+
+  // Empty state
   if (tasks.length === 0) {
     return (
       <div className="bg-white rounded-lg border border-gray-200 overflow-hidden">

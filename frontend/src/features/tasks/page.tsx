@@ -1,8 +1,8 @@
-import { useMemo } from "react";
+import { useState } from "react";
 import { useNavigate, useSearch } from "@tanstack/react-router";
-import { useTasks, useCreateTask, useUpdateTask, useDeleteTask, useAllTaskStats } from "./services";
+import { useCreateTask, useUpdateTask, useDeleteTask, useTask } from "./services";
 import type { ApiTask, CreateTaskRequest, UpdateTaskRequest } from "@/types/app.type";
-import { LoadingState, ErrorState, TasksHeader, TasksSearch, TasksTable, TaskForm, TaskStats } from "./components";
+import { TasksHeader, TasksSearch, TasksTable, TaskForm, TaskStats } from "./components";
 import { useAuth } from "@/contexts/AuthContext";
 
 export function TasksPage() {
@@ -10,38 +10,19 @@ export function TasksPage() {
   const navigate = useNavigate();
   const searchParams = useSearch({ from: "/_autherized/tasks" });
 
+  // State for task counts from TasksTable
+  const [taskCounts, setTaskCounts] = useState({ current: 0, total: 0 });
+
   const isFormOpen = searchParams.create === "true" || searchParams.edit !== undefined;
   const editingTaskId = searchParams.edit;
   const formMode = searchParams.create === "true" ? "create" : "edit";
 
-  const queryParams = useMemo(
-    () => ({
-      search: searchParams.search || undefined,
-      status: searchParams.status !== "all" ? searchParams.status : undefined,
-      sortBy: (searchParams.sortBy || "createdAt") as "createdAt" | "updatedAt" | "title" | "status",
-      sortOrder: (searchParams.sortOrder || "desc") as "asc" | "desc",
-      limit: 50, // Reasonable limit for now
-    }),
-    [searchParams.search, searchParams.status, searchParams.sortBy, searchParams.sortOrder]
-  );
-
-  const { data: tasksData, isLoading, error, refetch } = useTasks(queryParams);
-  const { data: statsData, isLoading: isStatsLoading } = useAllTaskStats();
+  const { data: editingTaskData } = useTask(editingTaskId || "");
   const createTaskMutation = useCreateTask();
   const updateTaskMutation = useUpdateTask();
   const deleteTaskMutation = useDeleteTask();
 
-  const tasks = tasksData?.data?.tasks || [];
-  const totalTasks = tasksData?.meta?.pagination?.total || 0;
-  const stats = statsData?.data || {
-    total: 0,
-    pending: 0,
-    inProgress: 0,
-    completed: 0,
-    cancelled: 0,
-  };
-
-  const editingTask = editingTaskId ? tasks.find((task) => task.id === editingTaskId) || null : null;
+  const editingTask = editingTaskData?.data || null;
 
   const handleCreateTask = () => {
     navigate({
@@ -105,20 +86,15 @@ export function TasksPage() {
     });
   };
 
-  if (isLoading) return <LoadingState />;
-  if (error) return <ErrorState onRetry={() => refetch()} />;
-
   return (
     <div className="space-y-6">
       <TasksHeader onCreateTask={handleCreateTask} />
 
-      <TaskStats stats={stats} isLoading={isStatsLoading} />
+      <TaskStats />
 
-      <TasksSearch filteredCount={tasks.length} totalCount={totalTasks} />
+      <TasksSearch filteredCount={taskCounts.current} totalCount={taskCounts.total} />
 
       <TasksTable
-        tasks={tasks}
-        searchTerm={searchParams.search || ""}
         onEditTask={handleEditTask}
         onDeleteTask={handleDeleteTask}
         isDeleting={deleteTaskMutation.isPending}

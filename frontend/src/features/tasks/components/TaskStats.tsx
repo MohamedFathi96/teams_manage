@@ -1,13 +1,17 @@
 import { BarChart3, CheckSquare, Clock, AlertCircle, XCircle } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import type { TaskStats as TaskStatsType } from "@/types/app.type";
+import { useAllTaskStats } from "../services";
 
-interface TaskStatsProps {
-  stats: TaskStatsType;
-  isLoading?: boolean;
-}
+export function TaskStats() {
+  const { data: statsData, isLoading } = useAllTaskStats();
 
-export function TaskStats({ stats, isLoading }: TaskStatsProps) {
+  const stats = statsData?.data || {
+    total: 0,
+    pending: 0,
+    inProgress: 0,
+    completed: 0,
+    cancelled: 0,
+  };
   const statItems = [
     {
       title: "Total Tasks",

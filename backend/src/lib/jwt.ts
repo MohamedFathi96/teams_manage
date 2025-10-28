@@ -1,7 +1,7 @@
 import jwt from "jsonwebtoken";
 import type { Request, Response, NextFunction } from "express";
-import { config } from "../config/index.ts";
-import { UnauthorizedError } from "../errors/AppError.ts";
+import { config } from "../config/index.js";
+import { UnauthorizedError } from "../errors/AppError.js";
 import crypto from "crypto";
 
 export type JwtPayload = {

@@ -1,5 +1,5 @@
-import { User } from "@/models/User.ts";
-import { NotFoundError } from "@/errors/AppError.ts";
+import { User } from "@/models/User.js";
+import { NotFoundError } from "@/errors/AppError.js";
 import mongoose from "mongoose";
 
 export async function getAllUsers(params: { page?: number; limit?: number; search?: string }, currentUserId: string) {

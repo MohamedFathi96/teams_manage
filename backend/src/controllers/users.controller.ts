@@ -1,7 +1,7 @@
 import type { Request, Response, NextFunction } from "express";
-import { getAllUsers, getUserById } from "../services/users.service.ts";
-import { catchAsync } from "../utils/catchAsync.ts";
-import { ApiResponseHelper } from "../utils/responceHelper.ts";
+import { getAllUsers, getUserById } from "../services/users.service.js";
+import { catchAsync } from "../utils/catchAsync.js";
+import { ApiResponseHelper } from "../utils/responceHelper.js";
 
 export const getUsers = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
   const { page, limit, search } = req.query;

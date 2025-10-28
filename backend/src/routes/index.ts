@@ -1,8 +1,8 @@
 import { Router } from "express";
-import authRoutes from "./auth.routes.ts";
-import usersRoutes from "./users.routes.ts";
-import tasksRoutes from "./tasks.routes.ts";
-import { authMiddleware } from "@/lib/jwt.ts";
+import authRoutes from "./auth.routes.js";
+import usersRoutes from "./users.routes.js";
+import tasksRoutes from "./tasks.routes.js";
+import { authMiddleware } from "@/lib/jwt.js";
 
 const router = Router();
 

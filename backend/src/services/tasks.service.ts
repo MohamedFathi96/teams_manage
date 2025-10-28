@@ -1,6 +1,6 @@
-import { Task, ITaskDocument } from "@/models/Task.ts";
-import { User } from "@/models/User.ts";
-import { NotFoundError, BadRequestError, ForbiddenError } from "@/errors/AppError.ts";
+import { Task, ITaskDocument } from "@/models/Task.js";
+import { User } from "@/models/User.js";
+import { NotFoundError, BadRequestError, ForbiddenError } from "@/errors/AppError.js";
 import mongoose from "mongoose";
 import {
   CreateTaskDto,

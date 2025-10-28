@@ -1,5 +1,5 @@
 import { createLogger, format, transports } from "winston";
-import { config } from "../config/index.ts";
+import { config } from "../config/index.js";
 
 const { combine, timestamp, printf, colorize, errors, splat } = format;
 

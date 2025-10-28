@@ -1,7 +1,7 @@
 import { Router } from "express";
-import { getUsers, getUserProfile } from "../controllers/users.controller.ts";
+import { getUsers, getUserProfile } from "../controllers/users.controller.js";
 import { z } from "zod";
-import { validate } from "../middleware/validate.ts";
+import { validate } from "../middleware/validate.js";
 
 const router = Router();
 

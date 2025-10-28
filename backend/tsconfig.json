@@ -14,8 +14,6 @@
     "sourceMap": true,
     "types": ["node"],
     "allowSyntheticDefaultImports": true,
-    "noEmit": true,
-    "allowImportingTsExtensions": true,
     "baseUrl": ".",
     "paths": {
       "@/*": ["src/*"]

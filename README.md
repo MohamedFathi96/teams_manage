@@ -4,7 +4,34 @@ A modern task management application built with React, Node.js, Express, TypeScr
 
 ## 🚀 Quick Start
 
-### Using pnpm (Recommended)
+### Option 1: Using Docker Compose (Easiest)
+
+1. **Clone the repository**
+
+   ```bash
+   git clone <repository-url>
+   cd teams_manage
+   ```
+
+2. **Start the entire application with Docker Compose**
+
+   ```bash
+   docker-compose up -d
+   ```
+
+3. **Access the application**
+
+   - Frontend: http://localhost:3000
+   - Backend API: http://localhost:5000
+   - MongoDB: localhost:27017
+
+4. **Stop the application**
+
+   ```bash
+   docker-compose down
+   ```
+
+### Option 2: Using pnpm (Development)
 
 1. **Clone the repository**
 

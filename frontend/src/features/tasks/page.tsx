@@ -1,29 +1,28 @@
-import { useState, useMemo } from "react";
+import { useMemo } from "react";
+import { useNavigate, useSearch } from "@tanstack/react-router";
 import { useTasks, useCreateTask, useUpdateTask, useDeleteTask, useAllTaskStats } from "./services";
-import type { ApiTask, TaskStatus, CreateTaskRequest, UpdateTaskRequest } from "@/types/app.type";
+import type { ApiTask, CreateTaskRequest, UpdateTaskRequest } from "@/types/app.type";
 import { LoadingState, ErrorState, TasksHeader, TasksSearch, TasksTable, TaskForm, TaskStats } from "./components";
 import { useAuth } from "@/contexts/AuthContext";
 
 export function TasksPage() {
   const { user } = useAuth();
-  const [searchTerm, setSearchTerm] = useState("");
-  const [statusFilter, setStatusFilter] = useState<TaskStatus | "all">("all");
-  const [sortBy, setSortBy] = useState("createdAt");
-  const [sortOrder, setSortOrder] = useState<"asc" | "desc">("desc");
-  const [isFormOpen, setIsFormOpen] = useState(false);
-  const [editingTask, setEditingTask] = useState<ApiTask | null>(null);
-  const [formMode, setFormMode] = useState<"create" | "edit">("create");
+  const navigate = useNavigate();
+  const searchParams = useSearch({ from: "/_autherized/tasks" });
 
-  // Query parameters for API
+  const isFormOpen = searchParams.create === "true" || searchParams.edit !== undefined;
+  const editingTaskId = searchParams.edit;
+  const formMode = searchParams.create === "true" ? "create" : "edit";
+
   const queryParams = useMemo(
     () => ({
-      search: searchTerm || undefined,
-      status: statusFilter !== "all" ? statusFilter : undefined,
-      sortBy: sortBy as any,
-      sortOrder,
+      search: searchParams.search || undefined,
+      status: searchParams.status !== "all" ? searchParams.status : undefined,
+      sortBy: (searchParams.sortBy || "createdAt") as "createdAt" | "updatedAt" | "title" | "status",
+      sortOrder: (searchParams.sortOrder || "desc") as "asc" | "desc",
       limit: 50, // Reasonable limit for now
     }),
-    [searchTerm, statusFilter, sortBy, sortOrder]
+    [searchParams.search, searchParams.status, searchParams.sortBy, searchParams.sortOrder]
   );
 
   const { data: tasksData, isLoading, error, refetch } = useTasks(queryParams);
@@ -33,6 +32,7 @@ export function TasksPage() {
   const deleteTaskMutation = useDeleteTask();
 
   const tasks = tasksData?.data?.tasks || [];
+  const totalTasks = tasksData?.meta?.pagination?.total || 0;
   const stats = statsData?.data || {
     total: 0,
     pending: 0,
@@ -41,30 +41,20 @@ export function TasksPage() {
     cancelled: 0,
   };
 
-  // Client-side filtering for search (since API handles server-side search too)
-  const filteredTasks = tasks.filter((task) => {
-    if (searchTerm) {
-      const searchLower = searchTerm.toLowerCase();
-      return (
-        task.title.toLowerCase().includes(searchLower) ||
-        task.description.toLowerCase().includes(searchLower) ||
-        task.assignedTo.name.toLowerCase().includes(searchLower) ||
-        task.createdBy.name.toLowerCase().includes(searchLower)
-      );
-    }
-    return true;
-  });
+  const editingTask = editingTaskId ? tasks.find((task) => task.id === editingTaskId) || null : null;
 
   const handleCreateTask = () => {
-    setFormMode("create");
-    setEditingTask(null);
-    setIsFormOpen(true);
+    navigate({
+      to: "/tasks",
+      search: { ...searchParams, create: "true" },
+    });
   };
 
   const handleEditTask = (task: ApiTask) => {
-    setFormMode("edit");
-    setEditingTask(task);
-    setIsFormOpen(true);
+    navigate({
+      to: "/tasks",
+      search: { ...searchParams, edit: task.id },
+    });
   };
 
   const handleDeleteTask = async (task: ApiTask) => {
@@ -87,16 +77,32 @@ export function TasksPage() {
           data: data as UpdateTaskRequest,
         });
       }
-      setIsFormOpen(false);
-      setEditingTask(null);
+      // Close form by removing search params
+      navigate({
+        to: "/tasks",
+        search: {
+          search: searchParams.search,
+          status: searchParams.status,
+          sortBy: searchParams.sortBy,
+          sortOrder: searchParams.sortOrder,
+        },
+      });
     } catch (error) {
       console.error("Failed to save task:", error);
     }
   };
 
   const handleCloseForm = () => {
-    setIsFormOpen(false);
-    setEditingTask(null);
+    // Close form by removing search params
+    navigate({
+      to: "/tasks",
+      search: {
+        search: searchParams.search,
+        status: searchParams.status,
+        sortBy: searchParams.sortBy,
+        sortOrder: searchParams.sortOrder,
+      },
+    });
   };
 
   if (isLoading) return <LoadingState />;
@@ -108,22 +114,11 @@ export function TasksPage() {
 
       <TaskStats stats={stats} isLoading={isStatsLoading} />
 
-      <TasksSearch
-        searchTerm={searchTerm}
-        onSearchChange={setSearchTerm}
-        statusFilter={statusFilter}
-        onStatusFilterChange={setStatusFilter}
-        sortBy={sortBy}
-        onSortByChange={setSortBy}
-        sortOrder={sortOrder}
-        onSortOrderChange={setSortOrder}
-        filteredCount={filteredTasks.length}
-        totalCount={tasks.length}
-      />
+      <TasksSearch filteredCount={tasks.length} totalCount={totalTasks} />
 
       <TasksTable
-        tasks={filteredTasks}
-        searchTerm={searchTerm}
+        tasks={tasks}
+        searchTerm={searchParams.search || ""}
         onEditTask={handleEditTask}
         onDeleteTask={handleDeleteTask}
         isDeleting={deleteTaskMutation.isPending}

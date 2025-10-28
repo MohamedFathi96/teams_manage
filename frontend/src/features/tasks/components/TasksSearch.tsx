@@ -1,34 +1,67 @@
+import { useState, useEffect } from "react";
+import { useNavigate, useSearch } from "@tanstack/react-router";
 import { Search, Filter } from "lucide-react";
 import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import type { TaskStatus } from "@/types/app.type";
+import { useDebounce } from "@/hooks/useDebounce";
 
 interface TasksSearchProps {
-  searchTerm: string;
-  onSearchChange: (value: string) => void;
-  statusFilter: TaskStatus | "all";
-  onStatusFilterChange: (value: TaskStatus | "all") => void;
-  sortBy: string;
-  onSortByChange: (value: string) => void;
-  sortOrder: "asc" | "desc";
-  onSortOrderChange: (value: "asc" | "desc") => void;
+  // Display data
   filteredCount: number;
   totalCount: number;
 }
 
-export function TasksSearch({
-  searchTerm,
-  onSearchChange,
-  statusFilter,
-  onStatusFilterChange,
-  sortBy,
-  onSortByChange,
-  sortOrder,
-  onSortOrderChange,
-  filteredCount,
-  totalCount,
-}: TasksSearchProps) {
+export function TasksSearch({ filteredCount, totalCount }: TasksSearchProps) {
+  const navigate = useNavigate();
+  const searchParams = useSearch({ from: "/_autherized/tasks" });
+
+  // Get current filter values from URL search params
+  const searchTerm = searchParams.search || "";
+  const statusFilter: TaskStatus | "all" = searchParams.status || "all";
+  const sortBy = searchParams.sortBy || "createdAt";
+  const sortOrder: "asc" | "desc" = searchParams.sortOrder || "desc";
+
+  // Local search state for debouncing
+  const [localSearchTerm, setLocalSearchTerm] = useState(searchTerm);
+  const debouncedSearchTerm = useDebounce(localSearchTerm, 500);
+
+  // Update local search term when URL changes (e.g., from browser navigation)
+  useEffect(() => {
+    setLocalSearchTerm(searchTerm);
+  }, [searchTerm]);
+
+  // Handle debounced search changes
+  useEffect(() => {
+    if (debouncedSearchTerm !== searchTerm) {
+      navigate({
+        to: "/tasks",
+        search: { ...searchParams, search: debouncedSearchTerm || undefined },
+      });
+    }
+  }, [debouncedSearchTerm, searchTerm, navigate, searchParams]);
+
+  // Filter change handlers
+  const handleStatusFilterChange = (status: TaskStatus | "all") => {
+    navigate({
+      to: "/tasks",
+      search: { ...searchParams, status: status !== "all" ? status : undefined },
+    });
+  };
+
+  const handleSortByChange = (sortBy: string) => {
+    navigate({
+      to: "/tasks",
+      search: { ...searchParams, sortBy },
+    });
+  };
+
+  const handleSortOrderChange = (sortOrder: "asc" | "desc") => {
+    navigate({
+      to: "/tasks",
+      search: { ...searchParams, sortOrder },
+    });
+  };
   return (
     <div className="bg-white rounded-lg border border-gray-200 p-6">
       <div className="flex flex-col gap-4">
@@ -38,8 +71,8 @@ export function TasksSearch({
             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
             <Input
               placeholder="Search tasks by title or description..."
-              value={searchTerm}
-              onChange={(e) => onSearchChange(e.target.value)}
+              value={localSearchTerm}
+              onChange={(e) => setLocalSearchTerm(e.target.value)}
               className="pl-10"
             />
           </div>
@@ -58,7 +91,7 @@ export function TasksSearch({
           <div className="flex flex-wrap gap-3">
             <div className="flex items-center gap-2">
               <label className="text-sm text-gray-600">Status:</label>
-              <Select value={statusFilter} onValueChange={onStatusFilterChange}>
+              <Select value={statusFilter} onValueChange={handleStatusFilterChange}>
                 <SelectTrigger className="w-32">
                   <SelectValue />
                 </SelectTrigger>
@@ -74,7 +107,7 @@ export function TasksSearch({
 
             <div className="flex items-center gap-2">
               <label className="text-sm text-gray-600">Sort by:</label>
-              <Select value={sortBy} onValueChange={onSortByChange}>
+              <Select value={sortBy} onValueChange={handleSortByChange}>
                 <SelectTrigger className="w-32">
                   <SelectValue />
                 </SelectTrigger>
@@ -89,7 +122,7 @@ export function TasksSearch({
 
             <div className="flex items-center gap-2">
               <label className="text-sm text-gray-600">Order:</label>
-              <Select value={sortOrder} onValueChange={onSortOrderChange}>
+              <Select value={sortOrder} onValueChange={handleSortOrderChange}>
                 <SelectTrigger className="w-24">
                   <SelectValue />
                 </SelectTrigger>

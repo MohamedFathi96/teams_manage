@@ -18,8 +18,17 @@ export function Pagination({
   onPageChange,
   showInfo = true,
 }: PaginationProps) {
+  // Debug: Always show pagination for testing
+  console.log("Pagination props:", { currentPage, totalPages, totalItems, itemsPerPage });
+
   if (totalPages <= 1) {
-    return null;
+    return (
+      <div className="flex items-center justify-center px-6 py-4 border-t border-gray-200 bg-white">
+        <div className="text-sm text-gray-500">
+          {totalItems > 0 ? `Showing all ${totalItems} results` : "No results"}
+        </div>
+      </div>
+    );
   }
 
   const startItem = (currentPage - 1) * itemsPerPage + 1;
@@ -64,7 +73,6 @@ export function Pagination({
           Showing {startItem} to {endItem} of {totalItems} results
         </div>
       )}
-
       <div className="flex items-center space-x-2">
         <Button
           variant="outline"

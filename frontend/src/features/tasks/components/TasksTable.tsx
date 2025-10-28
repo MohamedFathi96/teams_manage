@@ -1,0 +1,144 @@
+import { Edit, Trash2, User, Calendar } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import type { ApiTask } from "@/types/app.type";
+import { EmptyState } from "./EmptyState";
+import { TaskStatusBadge } from "./TaskStatusBadge";
+
+interface TasksTableProps {
+  tasks: ApiTask[];
+  searchTerm: string;
+  onEditTask: (task: ApiTask) => void;
+  onDeleteTask: (task: ApiTask) => void;
+  isDeleting: boolean;
+  currentUserId?: string;
+}
+
+export function TasksTable({
+  tasks,
+  searchTerm,
+  onEditTask,
+  onDeleteTask,
+  isDeleting,
+  currentUserId,
+}: TasksTableProps) {
+  const formatDate = (dateString: string) => {
+    return new Date(dateString).toLocaleDateString("en-US", {
+      year: "numeric",
+      month: "short",
+      day: "numeric",
+    });
+  };
+
+  const formatDateTime = (dateString: string) => {
+    return new Date(dateString).toLocaleString("en-US", {
+      year: "numeric",
+      month: "short",
+      day: "numeric",
+      hour: "2-digit",
+      minute: "2-digit",
+    });
+  };
+
+  if (tasks.length === 0) {
+    return (
+      <div className="bg-white rounded-lg border border-gray-200 overflow-hidden">
+        <EmptyState searchTerm={searchTerm} />
+      </div>
+    );
+  }
+
+  return (
+    <div className="bg-white rounded-lg border border-gray-200 overflow-hidden">
+      <Table>
+        <TableHeader>
+          <TableRow>
+            <TableHead>Task</TableHead>
+            <TableHead>Status</TableHead>
+            <TableHead>Assigned To</TableHead>
+            <TableHead>Created By</TableHead>
+            <TableHead>Created</TableHead>
+            <TableHead>Updated</TableHead>
+            <TableHead className="text-right">Actions</TableHead>
+          </TableRow>
+        </TableHeader>
+        <TableBody>
+          {tasks.map((task) => (
+            <TableRow key={task.id}>
+              <TableCell>
+                <div className="max-w-xs">
+                  <p className="font-medium text-gray-900 truncate">{task.title}</p>
+                  <p className="text-sm text-gray-500 truncate">{task.description}</p>
+                </div>
+              </TableCell>
+              <TableCell>
+                <TaskStatusBadge status={task.status} />
+              </TableCell>
+              <TableCell>
+                <div className="flex items-center space-x-2">
+                  <div className="w-8 h-8 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-full flex items-center justify-center flex-shrink-0">
+                    <span className="text-xs font-semibold text-white">
+                      {task.assignedTo.name.charAt(0).toUpperCase()}
+                    </span>
+                  </div>
+                  <div className="min-w-0">
+                    <p className="text-sm font-medium text-gray-900 truncate">{task.assignedTo.name}</p>
+                    <p className="text-xs text-gray-500 truncate">{task.assignedTo.email}</p>
+                  </div>
+                </div>
+              </TableCell>
+              <TableCell>
+                <div className="flex items-center space-x-2">
+                  <div className="w-8 h-8 bg-gradient-to-br from-green-500 to-teal-600 rounded-full flex items-center justify-center flex-shrink-0">
+                    <span className="text-xs font-semibold text-white">
+                      {task.createdBy.name.charAt(0).toUpperCase()}
+                    </span>
+                  </div>
+                  <div className="min-w-0">
+                    <p className="text-sm font-medium text-gray-900 truncate">{task.createdBy.name}</p>
+                    <p className="text-xs text-gray-500 truncate">{task.createdBy.email}</p>
+                  </div>
+                </div>
+              </TableCell>
+              <TableCell>
+                <div className="flex items-center text-sm text-gray-500">
+                  <Calendar className="w-4 h-4 mr-1" />
+                  {formatDate(task.createdAt)}
+                </div>
+              </TableCell>
+              <TableCell>
+                <span className="text-sm text-gray-500">{formatDateTime(task.updatedAt)}</span>
+              </TableCell>
+              <TableCell className="text-right">
+                <div className="flex items-center justify-end space-x-2">
+                  <Button
+                    onClick={() => onEditTask(task)}
+                    variant="outline"
+                    size="sm"
+                    className="inline-flex items-center"
+                  >
+                    <Edit className="w-4 h-4 mr-1" />
+                    Edit
+                  </Button>
+                  {/* Only show delete button if current user is the creator */}
+                  {currentUserId === task.createdBy.id && (
+                    <Button
+                      onClick={() => onDeleteTask(task)}
+                      disabled={isDeleting}
+                      variant="outline"
+                      size="sm"
+                      className="inline-flex items-center text-red-600 hover:text-red-700 hover:bg-red-50"
+                    >
+                      <Trash2 className="w-4 h-4 mr-1" />
+                      Delete
+                    </Button>
+                  )}
+                </div>
+              </TableCell>
+            </TableRow>
+          ))}
+        </TableBody>
+      </Table>
+    </div>
+  );
+}

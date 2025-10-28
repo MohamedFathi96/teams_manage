@@ -1,12 +1,12 @@
 import { Outlet, Link, useMatchRoute } from "@tanstack/react-router";
 import { useAuth } from "@/contexts/AuthContext";
-import { MessageSquare, Radio, Settings, Users, LogOut, Menu, X } from "lucide-react";
+import { MessageSquare, CheckSquare, Settings, Users, LogOut, Menu, X } from "lucide-react";
 import { useState } from "react";
 import { cn } from "@/lib/utils";
 
 const navigation = [
   { name: "Dashboard", href: "/", icon: MessageSquare },
-  { name: "Tasks", href: "/tasks", icon: Radio },
+  { name: "Tasks", href: "/tasks", icon: CheckSquare },
   { name: "Users", href: "/users", icon: Users },
   { name: "Settings", href: "/settings", icon: Settings },
 ];

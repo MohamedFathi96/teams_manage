@@ -1,224 +1,199 @@
-# Chatty - Real-time Chat Application
+# Teams Manage - Task Management Application
 
-A modern real-time chat application built with React, Node.js, Express, TypeScript, and MongoDB.
+A modern task management application built with React, Node.js, Express, TypeScript, and MongoDB.
 
-## 🚀 Quick Start with Docker
+## 🚀 Quick Start
 
-The easiest way to run the entire application is using Docker Compose:
-
-```bash
-# Start all services (frontend, backend, and MongoDB)
-docker-compose up -d
-
-# Access the application
-# Frontend: http://localhost:3000
-# Backend API: http://localhost:5000
-# MongoDB: localhost:27017
-```
-
-For detailed Docker instructions, see [DOCKER_README.md](./DOCKER_README.md).
-
-## 🏗️ Architecture
-
-- **Frontend**: React 19 + TypeScript + Tailwind CSS + Vite
-- **Backend**: Node.js + Express + TypeScript + JWT Authentication
-- **Database**: MongoDB with Mongoose ODM
-- **Containerization**: Docker + Docker Compose
-
-## 📦 Services
-
-### Frontend (Port 3000)
-
-- Modern React application with TypeScript
-- Tailwind CSS for styling
-- Nginx for production serving
-- Hot reloading in development
-
-### Backend (Port 5000)
-
-- RESTful API with Express.js
-- JWT-based authentication
-- MongoDB integration
-- TypeScript for type safety
-- Comprehensive error handling
-
-### MongoDB (Port 27017)
-
-- MongoDB 7.0 with persistent storage
-- Pre-configured with authentication
-- Data persistence through Docker volumes
-
-## 🛠️ Development Setup
-
-### Prerequisites
-
-- Node.js 18+
-- MongoDB (or use Docker)
-- pnpm (recommended) or npm
-
-### Local Development
+### Using pnpm (Recommended)
 
 1. **Clone the repository**
 
    ```bash
    git clone <repository-url>
-   cd chatty
+   cd teams_manage
    ```
 
-2. **Backend Setup**
+2. **Start MongoDB**
+
+   ```bash
+   # Using Docker (recommended)
+   docker run -d -p 27017:27017 --name mongodb mongo:7.0
+
+   # Or install MongoDB locally
+   ```
+
+3. **Backend Setup**
 
    ```bash
    cd backend
    pnpm install
    cp .env.example .env
    # Edit .env with your MongoDB connection string
-   pnpm dev
+   pnpm run dev
    ```
 
-3. **Frontend Setup**
+4. **Frontend Setup** (in a new terminal)
 
    ```bash
    cd frontend
    pnpm install
-   pnpm dev
+   pnpm run dev
    ```
 
-4. **MongoDB Setup**
-   - Install MongoDB locally, or
-   - Use Docker: `docker run -d -p 27017:27017 --name mongodb mongo:7.0`
+5. **Access the application**
+   - Frontend: http://localhost:5173
+   - Backend API: http://localhost:5000
 
-## 🐳 Docker Commands
+## ✨ Features
 
-We provide a convenient script for Docker operations:
+- **Task Management**: Create, read, update, and delete tasks
+- **User Authentication**: JWT-based secure authentication
+- **Task Assignment**: Assign tasks to team members
+- **Status Tracking**: Track task progress (Pending, In Progress, Completed, Cancelled)
+- **Search & Filter**: Advanced search and filtering capabilities
+- **Pagination**: Efficient data loading with pagination
+- **Real-time Updates**: Live task updates and statistics
+- **Responsive Design**: Modern UI that works on all devices
 
-```bash
-# Make script executable (Linux/Mac)
-chmod +x docker-scripts.sh
+## 🏗️ Tech Stack
 
-# Start application
-./docker-scripts.sh start
+- **Frontend**: React 19 + TypeScript + TanStack Router + React Query + Tailwind CSS
+- **Backend**: Node.js + Express + TypeScript + JWT Authentication
+- **Database**: MongoDB with Mongoose ODM
+- **UI Components**: shadcn/ui + Radix UI
+- **Package Manager**: pnpm
 
-# Stop application
-./docker-scripts.sh stop
+## 🛠️ Development
 
-# View logs
-./docker-scripts.sh logs
+### Prerequisites
 
-# Check status
-./docker-scripts.sh status
+- Node.js 18+
+- pnpm (install with `npm install -g pnpm`)
+- MongoDB (or use Docker)
 
-# Rebuild and restart
-./docker-scripts.sh rebuild
-
-# Backup MongoDB
-./docker-scripts.sh backup
-
-# Clean up everything
-./docker-scripts.sh cleanup
-```
-
-## 📁 Project Structure
-
-```
-chatty/
-├── backend/                 # Node.js API server
-│   ├── src/
-│   │   ├── controllers/     # Route controllers
-│   │   ├── models/          # MongoDB models
-│   │   ├── routes/          # API routes
-│   │   ├── services/        # Business logic
-│   │   ├── middleware/      # Express middleware
-│   │   └── config/          # Configuration
-│   ├── Dockerfile
-│   └── package.json
-├── frontend/                # React application
-│   ├── src/
-│   │   ├── components/      # React components
-│   │   └── assets/          # Static assets
-│   ├── Dockerfile
-│   ├── nginx.conf
-│   └── package.json
-├── docker-compose.yml       # Multi-service orchestration
-├── docker-scripts.sh        # Docker management script
-└── DOCKER_README.md         # Detailed Docker documentation
-```
-
-## 🔧 Configuration
-
-### Environment Variables
+### Environment Configuration
 
 Create a `.env` file in the backend directory:
 
 ```env
 NODE_ENV=development
 PORT=5000
-MONGODB_URI=mongodb://localhost:27017/chatty
+MONGODB_URI=mongodb://localhost:27017/teams_manage
 JWT_SECRET=your-super-secret-jwt-key-minimum-16-characters
 JWT_EXPIRES_IN=604800
 ```
 
-### Docker Environment
+## 📋 API Endpoints
 
-The Docker Compose setup includes:
+### Authentication
 
-- **Custom network** for service communication
-- **Named volumes** for MongoDB data persistence
-- **Health checks** for service monitoring
-- **Production-optimized** builds
+- `POST /api/auth/register` - Register new user
+- `POST /api/auth/login` - User login
+- `POST /api/auth/refresh` - Refresh JWT token
 
-## 🚀 Deployment
+### Tasks
 
-### Production Deployment
+- `GET /api/tasks` - Get tasks with pagination and filters
+- `POST /api/tasks` - Create new task
+- `GET /api/tasks/:id` - Get specific task
+- `PUT /api/tasks/:id` - Update task
+- `DELETE /api/tasks/:id` - Delete task
+- `GET /api/tasks/stats/all` - Get task statistics
 
-1. **Update environment variables** in `docker-compose.yml`
-2. **Change default passwords** for MongoDB
-3. **Use strong JWT secrets**
-4. **Configure reverse proxy** (Nginx/Traefik) for HTTPS
-5. **Set up monitoring** and logging
+### Users
 
-### Security Considerations
+- `GET /api/users` - Get all users (for task assignment)
 
-- Change default MongoDB credentials
-- Use environment-specific JWT secrets
-- Implement rate limiting
-- Configure CORS properly
-- Use HTTPS in production
-- Regular security updates
+## 📁 Project Structure
 
-## 📊 Monitoring
+```
+teams_manage/
+├── backend/                 # Node.js API server
+│   ├── src/
+│   │   ├── controllers/     # Route controllers (auth, tasks, users)
+│   │   ├── models/          # MongoDB models (User, Task)
+│   │   ├── routes/          # API routes
+│   │   ├── services/        # Business logic
+│   │   ├── middleware/      # Express middleware
+│   │   ├── types/           # TypeScript types
+│   │   └── utils/           # Utility functions
+│   └── package.json
+├── frontend/                # React application
+│   ├── src/
+│   │   ├── components/      # Reusable UI components
+│   │   ├── features/        # Feature-based modules
+│   │   │   ├── auth/        # Authentication
+│   │   │   ├── tasks/       # Task management
+│   │   │   └── users/       # User management
+│   │   ├── hooks/           # Custom React hooks
+│   │   ├── lib/             # Utilities and configurations
+│   │   ├── routes/          # TanStack Router routes
+│   │   └── types/           # TypeScript types
+│   └── package.json
+└── README.md
+```
 
-### Health Checks
+## 🎯 Usage
 
-- Backend: `GET /api/health`
-- Frontend: Available at `http://localhost:3000`
-- MongoDB: Connection test via backend
+### Creating Tasks
 
-### Logs
+1. Register/Login to the application
+2. Navigate to the Tasks page
+3. Click "Create Task" button
+4. Fill in task details and assign to a user
+5. Save the task
+
+### Managing Tasks
+
+- **View Tasks**: Browse all tasks with pagination
+- **Filter Tasks**: Filter by status, search by title/description
+- **Sort Tasks**: Sort by creation date, title, or status
+- **Edit Tasks**: Update task details and status
+- **Delete Tasks**: Remove tasks (only creators can delete)
+
+### Task Status Flow
+
+```
+Pending → In Progress → Completed
+    ↓         ↓
+Cancelled ← Cancelled
+```
+
+## 🚀 Scripts
+
+### Backend
 
 ```bash
-# View all service logs
-docker-compose logs -f
+cd backend
+pnpm run dev      # Start development server
+pnpm run build    # Build for production
+pnpm run start    # Start production server
+pnpm run lint     # Run ESLint
+```
 
-# View specific service logs
-docker-compose logs -f backend
-docker-compose logs -f frontend
-docker-compose logs -f mongodb
+### Frontend
+
+```bash
+cd frontend
+pnpm run dev      # Start development server
+pnpm run build    # Build for production
+pnpm run preview  # Preview production build
+pnpm run lint     # Run ESLint
 ```
 
 ## 🤝 Contributing
 
 1. Fork the repository
-2. Create a feature branch
+2. Create a feature branch (`git checkout -b feature/amazing-feature`)
 3. Make your changes
-4. Test with Docker
-5. Submit a pull request
+4. Commit your changes (`git commit -m 'Add amazing feature'`)
+5. Push to the branch (`git push origin feature/amazing-feature`)
+6. Open a Pull Request
 
 ## 📄 License
 
 This project is licensed under the MIT License.
 
 ## 🆘 Support
-
-For detailed Docker setup and troubleshooting, see [DOCKER_README.md](./DOCKER_README.md).
 
 For issues and questions, please create an issue in the repository.

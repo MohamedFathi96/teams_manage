@@ -17,6 +17,12 @@ services:
       - ./backend/migrations:/docker-entrypoint-initdb.d
     networks:
       - teams-network
+    healthcheck:
+      test: echo 'db.runCommand("ping").ok' | mongosh mongodb://admin:password123@localhost:27017/teams_manage?authSource=admin --quiet || exit 1
+      interval: 5s
+      timeout: 5s
+      retries: 10
+      start_period: 10s
 
   # Backend API
   backend:
@@ -31,16 +37,19 @@ services:
       MONGODB_URI: mongodb://admin:password123@mongodb:27017/teams_manage?authSource=admin
       JWT_SECRET: your-super-secret-jwt-key-change-this-in-production
       JWT_EXPIRES_IN: "604800"
+      JWT_REFRESH_SECRET: your-super-secret-refresh-jwt-key-change-this-in-production
+      JWT_REFRESH_EXPIRES_IN: "2592000"
     ports:
       - "5000:5000"
     depends_on:
-      - mongodb
+      mongodb:
+        condition: service_healthy
     networks:
       - teams-network
     volumes:
       - ./backend/src:/app/src:ro
     healthcheck:
-      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:5000/api/health"]
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:5000/health"]
       interval: 30s
       timeout: 10s
       retries: 3
@@ -52,6 +61,8 @@ services:
       dockerfile: Dockerfile
     container_name: teams-frontend
     restart: unless-stopped
+    environment:
+      VITE_API_BASE_URL: http://localhost:5000/api
     ports:
       - "3000:80"
     depends_on:

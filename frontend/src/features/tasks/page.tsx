@@ -1,4 +1,3 @@
-import { useState } from "react";
 import { useNavigate, useSearch } from "@tanstack/react-router";
 import { useCreateTask, useUpdateTask, useDeleteTask, useTask } from "./services";
 import type { ApiTask, CreateTaskRequest, UpdateTaskRequest } from "@/types/app.type";
@@ -9,9 +8,6 @@ export function TasksPage() {
   const { user } = useAuth();
   const navigate = useNavigate();
   const searchParams = useSearch({ from: "/_autherized/tasks" });
-
-  // State for task counts from TasksTable
-  const [taskCounts, setTaskCounts] = useState({ current: 0, total: 0 });
 
   const isFormOpen = searchParams.create === "true" || searchParams.edit !== undefined;
   const editingTaskId = searchParams.edit;
@@ -92,7 +88,7 @@ export function TasksPage() {
 
       <TaskStats />
 
-      <TasksSearch filteredCount={taskCounts.current} totalCount={taskCounts.total} />
+      <TasksSearch />
 
       <TasksTable
         onEditTask={handleEditTask}

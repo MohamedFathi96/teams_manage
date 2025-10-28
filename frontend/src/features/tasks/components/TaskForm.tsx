@@ -12,7 +12,7 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import type { ApiTask, ApiUser, CreateTaskRequest, UpdateTaskRequest, TaskStatus } from "@/types/app.type";
+import type { ApiTask, CreateTaskRequest, UpdateTaskRequest, TaskStatus } from "@/types/app.type";
 import { useUsersForAssignment } from "../services";
 
 interface TaskFormProps {

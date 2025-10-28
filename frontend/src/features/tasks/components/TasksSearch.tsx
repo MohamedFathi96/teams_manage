@@ -8,11 +8,11 @@ import { useDebounce } from "@/hooks/useDebounce";
 
 interface TasksSearchProps {
   // Display data
-  filteredCount: number;
-  totalCount: number;
+  filteredCount?: number;
+  totalCount?: number;
 }
 
-export function TasksSearch({ filteredCount, totalCount }: TasksSearchProps) {
+export function TasksSearch({ filteredCount = 0, totalCount = 0 }: TasksSearchProps) {
   const navigate = useNavigate();
   const searchParams = useSearch({ from: "/_autherized/tasks" });
 

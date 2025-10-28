@@ -3,7 +3,7 @@ import React, { createContext, useContext, useState, useEffect, useCallback } fr
 import { apiClient, setupInterceptors } from "@/lib/axios";
 import type { ApiUser } from "@/types/app.type";
 
-type AuthContextType = {
+export type AuthContextType = {
   user: ApiUser | null;
   accessToken: string | null;
   refreshToken: string | null;

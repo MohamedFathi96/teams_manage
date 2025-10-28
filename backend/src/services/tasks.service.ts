@@ -61,24 +61,14 @@ export async function getAllTasks(params: TaskQueryParams, requesterId: string):
   const skip = (page - 1) * limit;
 
   // Build query
-  const query: any = {};
-
-  // Apply filters
-  if (status) {
-    query.status = status;
-  }
-
-  if (assignedTo) {
-    query.assignedTo = new mongoose.Types.ObjectId(assignedTo);
-  }
-
-  if (createdBy) {
-    query.createdBy = new mongoose.Types.ObjectId(createdBy);
-  }
-
-  if (search) {
-    query.$or = [{ title: { $regex: search, $options: "i" } }, { description: { $regex: search, $options: "i" } }];
-  }
+  const query: any = {
+    ...(status && { status }),
+    ...(assignedTo && { assignedTo: new mongoose.Types.ObjectId(assignedTo) }),
+    ...(createdBy && { createdBy: new mongoose.Types.ObjectId(createdBy) }),
+    ...(search && {
+      $or: [{ title: { $regex: search, $options: "i" } }, { description: { $regex: search, $options: "i" } }],
+    }),
+  };
 
   // Build sort object
   const sort: any = {};

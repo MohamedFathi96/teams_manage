@@ -47,7 +47,7 @@ A modern task management application built with React, Node.js, Express, TypeScr
 ## ✨ Features
 
 - **Task Management**: Create, read, update, and delete tasks
-- **User Authentication**: JWT-based secure authentication
+- **User Authentication**: JWT-based secure authentication & Refresh Tokens
 - **Task Assignment**: Assign tasks to team members
 - **Status Tracking**: Track task progress (Pending, In Progress, Completed, Cancelled)
 - **Search & Filter**: Advanced search and filtering capabilities

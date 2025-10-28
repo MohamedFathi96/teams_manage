@@ -2,19 +2,32 @@ import jwt from "jsonwebtoken";
 import type { Request, Response, NextFunction } from "express";
 import { config } from "../config/index.ts";
 import { UnauthorizedError } from "../errors/AppError.ts";
+import crypto from "crypto";
 
 export type JwtPayload = {
   sub: string; // user id
   email: string;
 };
 
-export function signToken(payload: JwtPayload, expiresInSeconds = 60 * 60 * 24 * 7): string {
+export function signToken(payload: JwtPayload, expiresInSeconds = config.jwtExpiresIn): string {
   // Using numeric expiresIn to satisfy jsonwebtoken@9 types
   return jwt.sign(payload, config.jwtSecret, { expiresIn: expiresInSeconds });
 }
 
+export function signRefreshToken(payload: JwtPayload, expiresInSeconds = config.jwtRefreshExpiresIn): string {
+  return jwt.sign(payload, config.jwtRefreshSecret, { expiresIn: expiresInSeconds });
+}
+
+export function generateRefreshToken(): string {
+  return crypto.randomBytes(64).toString("hex");
+}
+
 export function verifyToken(token: string): JwtPayload {
   return jwt.verify(token, config.jwtSecret) as JwtPayload;
+}
+
+export function verifyRefreshToken(token: string): JwtPayload {
+  return jwt.verify(token, config.jwtRefreshSecret) as JwtPayload;
 }
 
 export function authMiddleware(req: Request, _res: Response, next: NextFunction) {

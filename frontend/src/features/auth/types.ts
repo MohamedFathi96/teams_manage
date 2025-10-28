@@ -17,9 +17,25 @@ export type RegisterRequest = {
 export type LoginResponse = SuccessResponse<{
   user: ApiUser;
   token: string;
+  refreshToken: string;
 }>;
 
 export type RegisterResponse = SuccessResponse<{
   user: ApiUser;
   token: string;
+  refreshToken: string;
+}>;
+
+export type RefreshTokenResponse = SuccessResponse<{
+  user: ApiUser;
+  token: string;
+  refreshToken: string;
+}>;
+
+export type LogoutRequest = {
+  refreshToken: string;
+};
+
+export type LogoutResponse = SuccessResponse<{
+  message: string;
 }>;

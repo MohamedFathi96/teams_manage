@@ -16,9 +16,15 @@ export function AuthorizedLayout() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const matchRoute = useMatchRoute();
 
-  const handleLogout = () => {
-    logout();
-    window.location.href = "/login";
+  const handleLogout = async () => {
+    try {
+      await logout();
+      window.location.href = "/login";
+    } catch (error) {
+      console.error("Logout failed:", error);
+      // Still redirect to login even if logout API call fails
+      window.location.href = "/login";
+    }
   };
 
   return (
@@ -40,7 +46,7 @@ export function AuthorizedLayout() {
           <div className="flex items-center justify-between h-16 px-6 border-b border-gray-200">
             <div className="flex items-center space-x-2">
               <div className="w-8 h-8 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-lg flex items-center justify-center">
-                <MessageSquare className="w-5 h-5 text-white" />
+                <Users className="w-5 h-5 text-white" />
               </div>
               <span className="text-xl font-bold text-gray-900">Teams</span>
             </div>

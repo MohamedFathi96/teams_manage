@@ -5,6 +5,8 @@ export interface IUser {
   email: string;
   password: string;
   name: string;
+  refreshToken?: string;
+  refreshTokenExpiresAt?: Date;
 }
 
 export interface IUserDocument extends IUser, mongoose.Document {
@@ -16,6 +18,8 @@ const UserSchema = new Schema<IUserDocument>(
     email: { type: String, required: true, unique: true, lowercase: true, trim: true },
     password: { type: String, required: true, minlength: 8 },
     name: { type: String, required: true, trim: true },
+    refreshToken: { type: String, default: null },
+    refreshTokenExpiresAt: { type: Date, default: null },
   },
   { timestamps: true }
 );

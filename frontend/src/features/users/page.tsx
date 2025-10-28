@@ -1,14 +1,10 @@
 import { useState } from "react";
-import { useUsers, useStartChat } from "./services";
-import type { ApiUser } from "@/types/app.type";
+import { useUsers } from "./services";
 import { LoadingState, ErrorState, UsersHeader, UsersSearch, UsersTable } from "./components";
-import { useNavigate } from "@tanstack/react-router";
 
 export function UsersPage() {
   const [searchTerm, setSearchTerm] = useState("");
   const { data: usersData, isLoading, error, refetch } = useUsers();
-  const startChatMutation = useStartChat();
-  const navigate = useNavigate();
 
   const users = usersData?.data?.users || [];
   const filteredUsers = users.filter(
@@ -16,15 +12,6 @@ export function UsersPage() {
       user.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
       user.email.toLowerCase().includes(searchTerm.toLowerCase())
   );
-
-  const handleStartChat = async (user: ApiUser) => {
-    try {
-      await startChatMutation.mutateAsync({ userId: user.id });
-      navigate({ to: "/chats" });
-    } catch (error) {
-      console.error("Failed to start chat:", error);
-    }
-  };
 
   return isLoading ? (
     <LoadingState />
@@ -41,12 +28,7 @@ export function UsersPage() {
         totalCount={users.length}
       />
 
-      <UsersTable
-        users={filteredUsers}
-        searchTerm={searchTerm}
-        onStartChat={handleStartChat}
-        isStartingChat={startChatMutation.isPending}
-      />
+      <UsersTable users={filteredUsers} searchTerm={searchTerm} />
     </div>
   );
 }

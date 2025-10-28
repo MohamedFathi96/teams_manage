@@ -36,7 +36,7 @@ export function TasksSearch({ filteredCount, totalCount }: TasksSearchProps) {
     if (debouncedSearchTerm !== searchTerm) {
       navigate({
         to: "/tasks",
-        search: { ...searchParams, search: debouncedSearchTerm || undefined },
+        search: { ...searchParams, search: debouncedSearchTerm || undefined, page: undefined },
       });
     }
   }, [debouncedSearchTerm, searchTerm, navigate, searchParams]);
@@ -45,21 +45,21 @@ export function TasksSearch({ filteredCount, totalCount }: TasksSearchProps) {
   const handleStatusFilterChange = (status: TaskStatus | "all") => {
     navigate({
       to: "/tasks",
-      search: { ...searchParams, status: status !== "all" ? status : undefined },
+      search: { ...searchParams, status: status !== "all" ? status : undefined, page: undefined },
     });
   };
 
   const handleSortByChange = (sortBy: string) => {
     navigate({
       to: "/tasks",
-      search: { ...searchParams, sortBy },
+      search: { ...searchParams, sortBy, page: undefined },
     });
   };
 
   const handleSortOrderChange = (sortOrder: "asc" | "desc") => {
     navigate({
       to: "/tasks",
-      search: { ...searchParams, sortOrder },
+      search: { ...searchParams, sortOrder, page: undefined },
     });
   };
   return (

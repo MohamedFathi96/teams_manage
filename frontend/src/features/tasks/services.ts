@@ -1,4 +1,4 @@
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { useQuery, useInfiniteQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { apiClient } from "@/lib/axios";
 import type {
   ApiTask,
@@ -8,7 +8,7 @@ import type {
   TaskStats,
   ApiUser,
 } from "@/types/app.type";
-import type { SuccessResponse, PaginatedResponse } from "@/types/api.type";
+import type { SuccessResponse } from "@/types/api.type";
 
 // Types
 export type TasksListResponse = SuccessResponse<{
@@ -112,6 +112,22 @@ export function useTasks(params?: TaskQueryParams) {
   });
 }
 
+export function useInfiniteTasks(params?: Omit<TaskQueryParams, "page">) {
+  return useInfiniteQuery({
+    queryKey: ["infinite-tasks", params],
+    queryFn: ({ pageParam = 1 }) => tasksApi.getTasks({ ...params, page: pageParam }),
+    getNextPageParam: (lastPage) => {
+      const pagination = lastPage.meta?.pagination;
+      if (pagination && pagination.page < pagination.totalPages) {
+        return pagination.page + 1;
+      }
+      return undefined;
+    },
+    initialPageParam: 1,
+    staleTime: 2 * 60 * 1000, // 2 minutes
+  });
+}
+
 export function useTask(taskId: string) {
   return useQuery({
     queryKey: ["tasks", taskId],
@@ -141,7 +157,7 @@ export function useUpdateTask() {
 
   return useMutation({
     mutationFn: ({ taskId, data }: { taskId: string; data: UpdateTaskRequest }) => tasksApi.updateTask(taskId, data),
-    onSuccess: (data, variables) => {
+    onSuccess: (_, variables) => {
       queryClient.invalidateQueries({ queryKey: ["tasks"] });
       queryClient.invalidateQueries({ queryKey: ["tasks", variables.taskId] });
       queryClient.invalidateQueries({ queryKey: ["task-stats"] });

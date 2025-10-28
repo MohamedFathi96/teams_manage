@@ -7,6 +7,7 @@ const tasksSearchSchema = z.object({
   status: z.enum(["pending", "in_progress", "completed", "cancelled"]).optional(),
   sortBy: z.enum(["createdAt", "updatedAt", "title", "status"]).optional(),
   sortOrder: z.enum(["asc", "desc"]).optional(),
+  page: z.number().int().min(1).optional(),
   create: z.string().optional(),
   edit: z.string().optional(),
 });

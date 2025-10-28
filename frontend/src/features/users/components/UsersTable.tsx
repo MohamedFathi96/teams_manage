@@ -1,5 +1,3 @@
-import { MessageCircle, Loader2 } from "lucide-react";
-import { Button } from "@/components/ui/button";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import type { ApiUser } from "@/types/app.type";
 import { EmptyState } from "./EmptyState";
@@ -7,11 +5,9 @@ import { EmptyState } from "./EmptyState";
 interface UsersTableProps {
   users: ApiUser[];
   searchTerm: string;
-  onStartChat: (user: ApiUser) => void;
-  isStartingChat: boolean;
 }
 
-export function UsersTable({ users, searchTerm, onStartChat, isStartingChat }: UsersTableProps) {
+export function UsersTable({ users, searchTerm }: UsersTableProps) {
   const formatDate = (dateString: string) => {
     return new Date(dateString).toLocaleDateString("en-US", {
       year: "numeric",
@@ -36,7 +32,6 @@ export function UsersTable({ users, searchTerm, onStartChat, isStartingChat }: U
             <TableHead>User</TableHead>
             <TableHead>Email</TableHead>
             <TableHead>Joined</TableHead>
-            <TableHead className="text-right">Actions</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
@@ -60,21 +55,6 @@ export function UsersTable({ users, searchTerm, onStartChat, isStartingChat }: U
               </TableCell>
               <TableCell>
                 <span className="text-gray-500">{formatDate(user.createdAt)}</span>
-              </TableCell>
-              <TableCell className="text-right">
-                <Button
-                  onClick={() => onStartChat(user)}
-                  disabled={isStartingChat}
-                  size="sm"
-                  className="inline-flex items-center"
-                >
-                  {isStartingChat ? (
-                    <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                  ) : (
-                    <MessageCircle className="w-4 h-4 mr-2" />
-                  )}
-                  Start Chat
-                </Button>
               </TableCell>
             </TableRow>
           ))}

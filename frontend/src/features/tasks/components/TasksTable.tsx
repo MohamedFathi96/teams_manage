@@ -1,8 +1,9 @@
 import { useMemo } from "react";
-import { useSearch } from "@tanstack/react-router";
+import { useSearch, useNavigate } from "@tanstack/react-router";
 import { Edit, Trash2, Calendar, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { Pagination } from "@/components/Pagination";
 import type { ApiTask } from "@/types/app.type";
 import { EmptyState } from "./EmptyState";
 import { ErrorState } from "./ErrorState";
@@ -18,6 +19,7 @@ interface TasksTableProps {
 
 export function TasksTable({ onEditTask, onDeleteTask, isDeleting, currentUserId }: TasksTableProps) {
   const searchParams = useSearch({ from: "/_autherized/tasks" });
+  const navigate = useNavigate();
 
   const queryParams = useMemo(
     () => ({
@@ -25,15 +27,30 @@ export function TasksTable({ onEditTask, onDeleteTask, isDeleting, currentUserId
       status: searchParams.status !== "all" ? searchParams.status : undefined,
       sortBy: (searchParams.sortBy || "createdAt") as "createdAt" | "updatedAt" | "title" | "status",
       sortOrder: (searchParams.sortOrder || "desc") as "asc" | "desc",
-      limit: 50, // Reasonable limit for now
+      page: searchParams.page || 1,
+      limit: 20, // Reasonable limit for pagination
     }),
-    [searchParams.search, searchParams.status, searchParams.sortBy, searchParams.sortOrder]
+    [searchParams.search, searchParams.status, searchParams.sortBy, searchParams.sortOrder, searchParams.page]
   );
 
   const { data: tasksData, isLoading, error, refetch } = useTasks(queryParams);
 
   const tasks = tasksData?.data?.tasks || [];
+  const pagination = tasksData?.meta?.pagination || {
+    page: 1,
+    limit: 20,
+    total: 0,
+    totalPages: 1,
+  };
   const searchTerm = searchParams.search || "";
+
+  // Pagination handlers
+  const handlePageChange = (newPage: number) => {
+    navigate({
+      to: "/tasks",
+      search: { ...searchParams, page: newPage },
+    });
+  };
 
   const formatDate = (dateString: string) => {
     return new Date(dateString).toLocaleDateString("en-US", {
@@ -174,6 +191,14 @@ export function TasksTable({ onEditTask, onDeleteTask, isDeleting, currentUserId
           ))}
         </TableBody>
       </Table>
+
+      <Pagination
+        currentPage={pagination.page}
+        totalPages={pagination.totalPages}
+        totalItems={pagination.total}
+        itemsPerPage={pagination.limit}
+        onPageChange={handlePageChange}
+      />
     </div>
   );
 }

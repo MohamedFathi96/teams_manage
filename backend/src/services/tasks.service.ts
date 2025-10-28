@@ -9,7 +9,7 @@ import {
   TaskResponse,
   TasksListResponse,
   TaskFilters,
-} from "@/types/task.types.ts";
+} from "@/types/task.types.js";
 
 export async function createTask(taskData: CreateTaskDto, createdById: string): Promise<TaskResponse> {
   // Validate that assignedTo user exists

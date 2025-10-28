@@ -9,7 +9,7 @@ import {
   getMyTasksHandler,
   getTaskStatsHandler,
   getAllTaskStatsHandler,
-} from "../controllers/tasks.controller.ts";
+} from "../controllers/tasks.controller.js";
 import { z } from "zod";
 import { validate } from "../middleware/validate.js";
 

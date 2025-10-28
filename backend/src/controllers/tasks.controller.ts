@@ -7,7 +7,7 @@ import {
   deleteTask,
   getTasksByUser,
   getTaskStats,
-} from "../services/tasks.service.ts";
+} from "../services/tasks.service.js";
 import { catchAsync } from "../utils/catchAsync.js";
 import { ApiResponseHelper } from "../utils/responceHelper.js";
 import { CreateTaskDto, UpdateTaskDto, TaskQueryParams } from "@/types/task.types.js";
